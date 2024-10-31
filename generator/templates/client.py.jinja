@@ -1,0 +1,62 @@
+import httpx
+from typing import Type, TypeVar, Generic
+from pydantic import BaseModel
+from .resource import PassthroughResourceImpl, UnifiedResourceImpl
+from .types.models import *
+
+T = TypeVar('T', bound=BaseModel)
+
+class ResourceFactory(Generic[T]):
+    def __init__(self, client: httpx.AsyncClient, resource_name: str, model_class: Type[T]):
+        self.client = client
+        self.resource_name = resource_name
+        self.model_class = model_class
+
+    def __call__(self, connection_key: str) -> UnifiedResourceImpl[T]:
+        return UnifiedResourceImpl(
+            client=self.client,
+            connection_key=connection_key,
+            resource_name=self.resource_name,
+            model_class=self.model_class
+        )
+
+class PassthroughFactory:
+    def __init__(self, client: httpx.AsyncClient):
+        self.client = client
+
+    def __call__(self, connection_key: str) -> PassthroughResourceImpl[Any]:
+        return PassthroughResourceImpl(
+            client=self.client,
+            connection_key=connection_key,
+            resource_name='',
+            model_class=dict  # Using dict as the model class since passthrough returns raw data
+        )
+
+class IntegrationOS:
+    def __init__(self, api_key: str, base_url: str = "https://api.integrationos.com/v1"):
+        self.api_key = api_key
+        self.base_url = base_url
+        self.client = httpx.AsyncClient(
+            base_url=self.base_url,
+            headers={
+                'x-integrationos-secret': self.api_key,
+                'Content-Type': 'application/json',
+            }
+        )
+
+    async def __aenter__(self):
+        await self.client.__aenter__()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.client.__aexit__(exc_type, exc_val, exc_tb)
+
+    @property
+    def passthrough(self) -> PassthroughFactory:
+        return PassthroughFactory(self.client)
+
+    {% for resource in resources %}
+    @property
+    def {{ resource.camel_case }}(self) -> ResourceFactory[{{ resource.pascal_case }}]:
+        return ResourceFactory(self.client, '{{ resource.kebab_case }}', {{ resource.pascal_case }})
+    {% endfor %}
