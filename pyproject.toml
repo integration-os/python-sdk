@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "integrationos"
-version = "0.1.2"
+version = "0.1.3"
 description = "A Python SDK for IntegrationOS"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -15,7 +15,11 @@ dependencies = [
     "case-converter",
     "jinja2",
     "requests",
+    "email-validator",
 ]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0.0,<8.0.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
