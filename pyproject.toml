@@ -4,19 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "integrationos"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Python SDK for IntegrationOS"
 readme = "README.md"
 requires-python = ">=3.7"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["integrationos*"]
-namespaces = false
-
-[tool.setuptools.package-data]
-integrationos = ["py.typed"]
-
 dependencies = [
     "httpx",
     "pydantic",
@@ -25,3 +16,11 @@ dependencies = [
     "jinja2",
     "requests",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["integrationos*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+integrationos = ["py.typed"]
