@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: integrationos
-Version: 0.1.0
+Version: 0.1.1
 Summary: A Python SDK for IntegrationOS
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
