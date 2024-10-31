@@ -16,3 +16,12 @@ namespaces = false
 
 [tool.setuptools.package-data]
 integrationos = ["py.typed"]
+
+dependencies = [
+    "httpx",
+    "pydantic",
+    "python-dotenv",
+    "case-converter",
+    "jinja2",
+    "requests",
+]
